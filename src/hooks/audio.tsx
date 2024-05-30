@@ -18,11 +18,12 @@ export const useRecorder = () => {
             try {
                 mediaRecorderRef.current =
                     new MediaRecorder(stream, {
-                        mimeType: MediaRecorder.isTypeSupported('audio/ogg; codecs=opus') ?
-                            'audio/ogg; codecs=opus' :
-                            'audio/mp4'
+                        mimeType: MediaRecorder.isTypeSupported('audio/mp4') ?
+                            'audio/mp4' :
+                            'audio/webm;codecs=pcm'
                     })
             } catch (e) {
+                console.error(e)
                 alert('初始化录音失败');
                 return
             }

@@ -54,8 +54,8 @@
       "targets": "all",
       "identifier": "com.youxam.homework.noise-reducer",
       "icon": [
-        "icons/icon.png",
-        "icons/icon.ico"
+        "icons/icon.ico",
+        "icons/icon.png"
       ]
     }
   }

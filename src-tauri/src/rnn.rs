@@ -29,11 +29,6 @@ trait ReadSample {
     }
 }
 
-// TODO: support either endianness
-struct RawSampleIter<R: Read> {
-    bytes: std::io::Bytes<R>,
-}
-
 struct Resample<RS: ReadSample> {
     sinc: Vec<Sinc<[f32; 16]>>,
     buf: Vec<f32>,
@@ -56,23 +51,6 @@ impl<I: Iterator<Item = Result<f32, Error>>> IterReadSample<I> {
     }
 }
 
-impl<R: Read> Iterator for RawSampleIter<R> {
-    type Item = Result<f32, Error>;
-
-    fn next(&mut self) -> Option<Result<f32, Error>> {
-        match self.bytes.next() {
-            None => None,
-            Some(Err(e)) => Some(Err(e.into())),
-            Some(Ok(a)) => match self.bytes.next() {
-                None => Some(Err(anyhow!(
-                    "Unexpected end of input (expected an even number of bytes)"
-                ))),
-                Some(Err(e)) => Some(Err(e.into())),
-                Some(Ok(b)) => Some(Ok(i16::from_le_bytes([a, b]) as f32)),
-            },
-        }
-    }
-}
 
 impl<I: Iterator<Item = Result<f32, Error>>> ReadSample for IterReadSample<I> {
     fn next_sample(&mut self) -> Result<Option<&[f32]>, Error> {

@@ -70,8 +70,8 @@ const App: React.FC = () => {
     const tempdirPath = await tempdir();
     let ext = 'wav';
     if (blob.type.includes('mp4')) ext = 'mp4'
-    else if (blob.type.includes('ogg')) ext = 'ogg'
-    const path = `${tempdirPath}record.${ext}`;
+    else if (blob.type.includes('webm')) ext = 'webm'
+    const path = `${tempdirPath}${Math.random().toString(36).slice(2)}_record.${ext}`;
     await writeBinaryFile(
       path,
       await blob.arrayBuffer(),
