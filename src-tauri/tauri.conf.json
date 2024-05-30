@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "降噪器",
+    "productName": "noise-reducer",
     "version": "0.0.1"
   },
   "tauri": {
@@ -54,7 +54,8 @@
       "targets": "all",
       "identifier": "com.youxam.homework.noise-reducer",
       "icon": [
-        "icons/icon.png"
+        "icons/icon.png",
+        "icons/icon.ico"
       ]
     }
   }
