@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils';
 import React, { useRef, useState, useEffect } from 'react';
-import { save } from '@tauri-apps/api/dialog';
-import { writeBinaryFile } from '@tauri-apps/api/fs';
-import { Input } from './ui/input';
+import { save, open } from '@tauri-apps/api/dialog';
+import { writeBinaryFile, readBinaryFile } from '@tauri-apps/api/fs';
 import { Label } from './ui/label';
+import { Button } from './ui/button';
 
 interface AudioPlayerProps {
     title: string;
@@ -12,7 +12,7 @@ interface AudioPlayerProps {
     tip?: string
     uploadTip?: string
     onClose?: () => void
-    onUpload?: ((file: File) => boolean) | ((file: File) => Promise<boolean>)
+    onUpload?: ((url: string) => void) | ((url: string) => Promise<void>)
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ title, src, className, tip, uploadTip, onClose, onUpload }) => {
@@ -98,19 +98,28 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ title, src, className, tip, u
             <div className="border-2 border-dotted border-gray-400 rounded-lg max-w-md mx-auto w-[300px] h-[120px] flex flex-col items-center justify-center">
                 {tip && !uploadTip && <div className="text-gray-500 select-none cursor-default">{tip || ''}</div>}
                 {uploadTip && <div className='px-4 space-y-2'>
-                    <Label htmlFor="file">{uploadTip}</Label>
-                    <Input
+                    <Label htmlFor="file" className='block'>{uploadTip}</Label>
+                    <Button
+                        className='block mx-auto'
                         id="file"
-                        type="file"
-                        accept=".wav"
-                        placeholder='上传文件'
-                        onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (file && onUpload && !await onUpload(file)) {
-                                e.target.value = '';
+                        onClick={async () => {
+                            const path = await open({
+                                filters: [{
+                                    name: 'Audio',
+                                    extensions: ['wav']
+                                }]
+                            });
+                            if (!path || path instanceof Array) return;
+                            const buffer = await readBinaryFile(path!)
+                            const blob = new Blob([buffer], { type: 'audio/wav' });
+                            const url = URL.createObjectURL(blob);
+                            if (onUpload) {
+                                await onUpload(url)
                             }
                         }}
-                    />
+                    >
+                        选择文件
+                    </Button>
                 </div>}
             </div>
         )

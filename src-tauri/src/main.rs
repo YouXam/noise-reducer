@@ -5,9 +5,9 @@ use std::env;
 
 use tauri::Window;
 
-mod transcode;
 mod fir;
 mod rnn;
+mod transcode;
 
 #[tauri::command]
 async fn to_wav(path: String) -> Result<(Vec<u8>, String), String> {
@@ -21,7 +21,11 @@ async fn to_wav(path: String) -> Result<(Vec<u8>, String), String> {
 }
 
 #[tauri::command]
-async fn add_noise(wav_path: std::path::PathBuf, snr: f32, window: Window) -> Result<(Vec<u8>, String), String> {
+async fn add_noise(
+    wav_path: std::path::PathBuf,
+    snr: f32,
+    window: Window,
+) -> Result<(Vec<u8>, String), String> {
     match fir::add_noise(wav_path, snr, window) {
         Ok(data) => Ok(data),
         Err(e) => {
@@ -32,7 +36,12 @@ async fn add_noise(wav_path: std::path::PathBuf, snr: f32, window: Window) -> Re
 }
 
 #[tauri::command]
-async fn denoise(noise_path: std::path::PathBuf, noiselesser: String, range: (i32, i32), window: Window) -> Result<(Vec<u8>, String), String> {
+async fn denoise(
+    noise_path: std::path::PathBuf,
+    noiselesser: String,
+    range: (i32, i32),
+    window: Window,
+) -> Result<(Vec<u8>, String), String> {
     if noiselesser == "fir" {
         match fir::denoise(noise_path, range, window) {
             Ok(data) => Ok(data),
@@ -52,7 +61,7 @@ async fn denoise(noise_path: std::path::PathBuf, noiselesser: String, range: (i3
                 file.read_to_end(&mut buffer).unwrap();
 
                 Ok((buffer, path.to_string()))
-            },
+            }
             Err(e) => {
                 eprintln!("Error: {:?}", e);
                 Err(e.to_string())

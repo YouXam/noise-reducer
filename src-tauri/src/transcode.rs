@@ -73,7 +73,9 @@ fn convert_mp4_to_wav(input_mp4: &str, output_wav: &str) -> anyhow::Result<()> {
                 let planes = buf.planes();
                 if let Some(plane) = planes.planes().iter().next() {
                     for &sample in plane.iter() {
-                        let sample_i16 = (sample * i16::MAX as f32).clamp(i16::MIN as f32, i16::MAX as f32) as i16;
+                        let sample_i16 = (sample * i16::MAX as f32)
+                            .clamp(i16::MIN as f32, i16::MAX as f32)
+                            as i16;
                         wav_writer.write_sample(sample_i16)?;
                     }
                 }

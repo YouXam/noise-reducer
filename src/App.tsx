@@ -192,13 +192,8 @@ const App: React.FC = () => {
               <AudioPlayer
                 src={recordingUrl}
                 title="录音"
-                onUpload={async (file) => {
-                  if (!file.type.includes('wav')) {
-                    alert('请选择 wav 格式的音频文件');
-                    return false
-                  }
+                onUpload={async (url) => {
                   setRecordingTip("加载音频中...")
-                  const url = URL.createObjectURL(file);
                   const path = await save(url);
                   setWavPath(path);
                   setRecordingUrl(url);
@@ -264,13 +259,8 @@ const App: React.FC = () => {
                   setNoiselessUrl(null);
                   setNoisePath(null);
                 }}
-                onUpload={async (file: File) => {
-                  if (!file.type.includes('wav')) {
-                    alert('请上传 wav 格式的音频文件');
-                    return false
-                  }
+                onUpload={async (url: string) => {
                   setNoiseTip("加载音频中...")
-                  const url = URL.createObjectURL(file);
                   const path = await save(url);
                   setNoiseUrl(url);
                   setRecordingTip("请录音或上传音频文件");

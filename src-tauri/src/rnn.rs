@@ -173,7 +173,6 @@ impl<W: Write + Seek> FrameWriter for WavFrameWriter<W> {
     }
 }
 
-
 fn wav_samples<R: Read + 'static>(wav: WavReader<R>) -> Box<dyn ReadSample> {
     let sample_rate = wav.spec().sample_rate as f64;
     let channels = wav.spec().channels as usize;
@@ -218,9 +217,7 @@ fn wav_samples<R: Read + 'static>(wav: WavReader<R>) -> Box<dyn ReadSample> {
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 
-pub fn denoise(
-    input_path: std::path::PathBuf,
-) -> Result<String, Box<dyn std::error::Error>> {
+pub fn denoise(input_path: std::path::PathBuf) -> Result<String, Box<dyn std::error::Error>> {
     let in_file = BufReader::new(
         File::open(&input_path)
             .with_context(|| format!("Failed to open input file \"{:?}\"", &input_path))?,
@@ -236,12 +233,15 @@ pub fn denoise(
     let channels = spec.channels;
     let mut samples = wav_samples(wav_reader);
     let mut frame_writer: Box<dyn FrameWriter> = {
-        let writer = WavWriter::new(out_file, WavSpec {
-            channels,
-            sample_rate: 48_000,
-            bits_per_sample: 16,
-            sample_format: SampleFormat::Int,
-        })?;
+        let writer = WavWriter::new(
+            out_file,
+            WavSpec {
+                channels,
+                sample_rate: 48_000,
+                bits_per_sample: 16,
+                sample_format: SampleFormat::Int,
+            },
+        )?;
         Box::new(WavFrameWriter { writer })
     };
 

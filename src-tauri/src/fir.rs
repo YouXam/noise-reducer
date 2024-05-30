@@ -16,11 +16,11 @@ fn read_audio(filename: &str) -> anyhow::Result<(Vec<f32>, hound::WavSpec)> {
     Ok((samples, spec))
 }
 
-fn signal_power(signal: &Vec<f32>) -> f32 {
+fn signal_power(signal: &[f32]) -> f32 {
     signal.iter().map(|&s| s * s).sum::<f32>() / signal.len() as f32
 }
 
-fn generate_noise(signal: &Vec<f32>, snr_db: f32) -> Vec<f32> {
+fn generate_noise(signal: &[f32], snr_db: f32) -> Vec<f32> {
     let signal_power = signal_power(signal);
     let snr = 10.0_f32.powf(snr_db / 10.0);
     let noise_power = signal_power / snr;
@@ -30,7 +30,7 @@ fn generate_noise(signal: &Vec<f32>, snr_db: f32) -> Vec<f32> {
     normal.sample_iter(&mut rng).take(signal.len()).collect()
 }
 
-fn add_noise_to(signal: &Vec<f32>, noise: Vec<f32>) -> Vec<f32> {
+fn add_noise_to(signal: &[f32], noise: &[f32]) -> Vec<f32> {
     signal
         .iter()
         .zip(noise.iter())
@@ -62,7 +62,7 @@ fn design_bandpass_filter(
     filter
 }
 
-fn apply_filter_fft(signal: &Vec<f32>, filter: &Vec<f32>) -> Vec<f32> {
+fn apply_filter_fft(signal: &[f32], filter: &[f32]) -> Vec<f32> {
     let signal_len = signal.len();
     let filter_len = filter.len();
     let output_len = signal_len + filter_len - 1;
@@ -114,7 +114,7 @@ pub fn add_noise(
     let noise = generate_noise(&signal, snr);
     window.emit("noise_generated", ())?;
 
-    let noisy_signal = add_noise_to(&signal, noise);
+    let noisy_signal = add_noise_to(&signal, &noise);
 
     let file = tempfile::NamedTempFile::new()?;
     let path = file
