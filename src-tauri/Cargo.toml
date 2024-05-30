@@ -1,0 +1,39 @@
+[package]
+name = "fir"
+version = "0.0.0"
+description = "A Tauri App"
+authors = ["you"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "1", features = [] }
+
+[profile.dev]
+opt-level = 3
+
+[profile.release]
+opt-level = "z"
+strip = true
+lto = true
+
+[dependencies]
+tauri = { version = "1", features = [ "fs-all", "os-all", "dialog-all", "macos-private-api", "shell-open"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+symphonia = { version = "0.5.4", features = ["isomp4", "aac"] }
+hound = "3.5.1"
+anyhow = "1.0.86"
+ogg-opus = "0.1.2"
+tempfile = "3.10.1"
+rustfft = "6.2.0"
+rand = "0.8.5"
+rand_distr = "0.4.3"
+nnnoiseless = "0.5.1"
+dasp_interpolate = "0.11.0"
+dasp_ring_buffer = "0.11.0"
+
+[features]
+# This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]

@@ -1,0 +1,61 @@
+{
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build",
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist"
+  },
+  "package": {
+    "productName": "降噪器",
+    "version": "0.0.1"
+  },
+  "tauri": {
+    "macOSPrivateApi": true,
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false,
+        "open": true
+      },
+      "dialog": {
+        "all": true
+      },
+      "os": {
+        "all": true
+      },
+      "fs": {
+        "scope": ["**", "**/*", "/**/*"],
+        "writeFile": true,
+        "readFile": true,
+        "all": true
+      }
+    },
+    "windows": [
+      {
+        "title": "降噪器",
+        "width": 800,
+        "height": 600,
+        "maxHeight": 600,
+        "maxWidth": 800,
+        "minHeight": 600,
+        "minWidth": 800
+      }
+    ],
+    "security": {
+      "csp": null
+    },
+    "bundle": {
+      "active": true,
+      "macOS": {
+        "entitlements": "Release.entitlements",
+        "exceptionDomain": "",
+        "frameworks": []
+      },
+      "targets": "all",
+      "identifier": "com.youxam.homework.noise-reducer",
+      "icon": [
+        "icons/icon.png"
+      ]
+    }
+  }
+}
