@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import Loading from '@/assests/loading.svg'
+import Loading from '@/assets/loading.svg'
 import { useRecorder } from '@/hooks/audio';
 import { cn } from '@/lib/utils';
 
