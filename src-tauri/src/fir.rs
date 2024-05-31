@@ -10,7 +10,6 @@ fn read_audio(filename: &str) -> anyhow::Result<(Vec<f32>, hound::WavSpec)> {
     let spec = reader.spec();
     let samples: Vec<f32> = reader
         .samples::<i16>()
-        // .map(|s| s.map(|s| s))
         .map(|s| s.map(|s| s as f32 / i16::MAX as f32))
         .collect::<Result<Vec<_>, _>>()?;
     Ok((samples, spec))
@@ -148,6 +147,7 @@ pub fn denoise(
             .ok_or("Invalid path")
             .map_err(anyhow::Error::msg)?,
     )?;
+
     window.emit("noise_loaded", ())?;
 
     let filter = design_bandpass_filter(
@@ -158,7 +158,17 @@ pub fn denoise(
     );
     window.emit("filter_generated", ())?;
 
-    let filtered_signal = apply_filter_fft(&signal, &filter);
+    let mut out_buf = vec![vec![0.0; signal.len() / spec.channels as usize]; spec.channels as usize];
+
+    for (i, frame) in signal.chunks(spec.channels as usize).enumerate() {
+        for (j, sample) in frame.iter().enumerate() {
+            out_buf[j][i] = *sample;
+        }
+    }
+
+    for i in 0..spec.channels as usize {
+        out_buf[i] = apply_filter_fft(&out_buf[i], &filter);
+    }
 
     window.emit("filter_applied", ())?;
 
@@ -172,8 +182,10 @@ pub fn denoise(
 
     let mut writer = hound::WavWriter::create(&path, spec)?;
 
-    for &sample in filtered_signal.iter() {
-        writer.write_sample((sample * i16::MAX as f32) as i16)?;
+    for i in 0..out_buf[0].len() {
+        for j in 0..spec.channels as usize {
+            writer.write_sample((out_buf[j][i] * i16::MAX as f32) as i16)?;
+        }
     }
 
     writer.finalize()?;
@@ -188,28 +200,3 @@ pub fn denoise(
 
     Ok((buf, path))
 }
-
-// fn main() {
-//     // 读取音频文件
-//     let (signal, spec) = read_audio("input.wav");
-
-//     // 生成并叠加噪声
-//     let noise = generate_noise(&signal, 20.0);
-//     let noisy_signal = add_noise(&signal, noise);
-
-//     let mut writer = hound::WavWriter::create("noisy.wav", spec).expect("Failed to create WAV file");
-//     for &sample in noisy_signal.iter() {
-//         writer.write_sample((sample * i16::MAX as f32) as i16).unwrap();
-//     }
-//     writer.finalize().unwrap();
-
-//     let filter = design_bandpass_filter(1024, 0.0, 2048.0, spec.sample_rate as f32);
-//     let filtered_signal = apply_filter_fft(&noisy_signal, &filter);
-
-//     let mut writer = hound::WavWriter::create("output.wav", spec).expect("Failed to create WAV file");
-//     for &sample in filtered_signal.iter() {
-//         writer.write_sample((sample * i16::MAX as f32) as i16).unwrap();
-//     }
-
-//     writer.finalize().unwrap();
-// }
