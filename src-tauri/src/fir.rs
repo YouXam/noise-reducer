@@ -151,7 +151,7 @@ pub fn denoise(
     window.emit("noise_loaded", ())?;
 
     let filter = design_bandpass_filter(
-        1024,
+        1025,
         range.0 as f32,
         range.1 as f32,
         spec.sample_rate as f32,
