@@ -51,7 +51,7 @@ fn design_bandpass_filter(
         let sinc = if i == center {
             2.0 * (high_cut - low_cut) / sample_rate
         } else {
-            let x = (i - center) as f32 * PI / sample_rate;
+            let x = (i - center) as f32 * 2.0 * PI / sample_rate;
             ((high_cut * x).sin() - (low_cut * x).sin()) / (i - center) as f32 / PI
         };
         filter[i as usize] =
