@@ -859,26 +859,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "fir"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "dasp_interpolate",
- "dasp_ring_buffer",
- "hound",
- "nnnoiseless",
- "rand 0.8.5",
- "rand_distr",
- "rustfft",
- "serde",
- "serde_json",
- "symphonia",
- "tauri",
- "tauri-build",
- "tempfile",
-]
-
-[[package]]
 name = "flate2"
 version = "1.0.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1788,6 +1768,26 @@ name = "nodrop"
 version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72ef4a56884ca558e5ddb05a1d1e7e1bfd9a68d9ed024c21704cc98872dae1bb"
+
+[[package]]
+name = "noise-reducer"
+version = "0.0.3"
+dependencies = [
+ "anyhow",
+ "dasp_interpolate",
+ "dasp_ring_buffer",
+ "hound",
+ "nnnoiseless",
+ "rand 0.8.5",
+ "rand_distr",
+ "rustfft",
+ "serde",
+ "serde_json",
+ "symphonia",
+ "tauri",
+ "tauri-build",
+ "tempfile",
+]
 
 [[package]]
 name = "nu-ansi-term"

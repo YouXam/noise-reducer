@@ -55,7 +55,8 @@ fn design_bandpass_filter(
             ((high_cut * x).sin() - (low_cut * x).sin()) / (i - center) as f32 / PI
         };
         filter[i as usize] =
-            sinc * (0.54 - 0.46 * ((2.0 * PI * i as f32) / (length as f32 - 1.0)).cos());
+            sinc * (0.54 - 0.46 * ((2.0 * PI * i as f32) /
+            (length as f32 - 1.0)).cos());
     }
 
     filter
@@ -158,7 +159,8 @@ pub fn denoise(
     );
     window.emit("filter_generated", ())?;
 
-    let mut out_buf = vec![vec![0.0; signal.len() / spec.channels as usize]; spec.channels as usize];
+    let mut out_buf =
+        vec![vec![0.0; signal.len() / spec.channels as usize]; spec.channels as usize];
 
     for (i, frame) in signal.chunks(spec.channels as usize).enumerate() {
         for (j, sample) in frame.iter().enumerate() {
